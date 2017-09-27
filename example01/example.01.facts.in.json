@@ -1,7 +1,8 @@
-module_name("example01")
 
-table("instrument")
-
-field(1, "feed", "int")
-field(2, "ticker", "string")
-field(3, "last", "double")
+[
+new ModuleName("example01"),
+new Table("instrument"),
+new Field(1, "feed", "int"),
+new Field(2, "ticker", "string"),
+new Field(3, "last", "double")
+]
