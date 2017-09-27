@@ -9,24 +9,10 @@ var Table = common.Table
 var Field = common.Field
 var Export = common.Export
 
-/*
-var inFacts = [
-	new ModuleName("example01"),
-	new Table("instrument"),
-	new Field(1, "instrument", "feed", "int"),
-	new Field(2, "instrument", "ticker", "string"),
-	new Field(3, "instrument", "last", "double")
-]
-*/
-
 var inFacts = bjorn.InputString("example.01.in.json")
 
 var data = stepan.transformModel(inFacts)
-
-console.log(data.tables.Field.rows)
-
 var root = stepan.buildJavaScriptAst(data)
-
 
 var lines = []
 root.print(lines, 0)

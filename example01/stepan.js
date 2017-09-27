@@ -152,7 +152,7 @@ function JsFunction_Print(output, depth) {
 function addJsExport(parent, name) {
     // item 164
     var assi = new JsAssignment(
-    	"exports." + name,
+    	"this." + name,
     	name
     )
     // item 165
