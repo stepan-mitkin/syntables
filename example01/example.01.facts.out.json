@@ -1,0 +1,11 @@
+
+
+
+[
+new ModuleName("example01"),
+new Table("instrument"),
+new Field(1, "instrument", "feed", "int"),
+new Field(2, "instrument", "ticker", "string"),
+new Field(3, "instrument", "last", "double"),
+new Export("instrument")
+]

@@ -14,6 +14,12 @@ function Field(ordinal, tableName, name, type) {
     this.type = type
 }
 
+function Export(name) {
+    this.name = name
+}
+
 exports.ModuleName = ModuleName
 exports.Table = Table
 exports.Field = Field
+exports.Export = Export
+
