@@ -3,12 +3,6 @@ var nools = require("nools")
 
 var common = require("./common.js")
 
-var ModuleName = common.ModuleName
-var Table = common.Table
-var Field = common.Field
-var Export = common.Export
-var Index = common.Index
-var IndexedField = common.IndexedField
 
 var Indent = 4
 
@@ -270,16 +264,8 @@ function createRulesEngine(ruleFile) {
     // item 257
     var options = {
     	name: "Transformation rules",
-    	define: {
-    		ModuleName: ModuleName,
-    		Table: Table,
-    		Field: Field,
-    		Export: Export,
-    		Index: Index,
-    		IndexedField: IndexedField
-    	},
-    	scope: {
-    	}
+    	define: common,
+    	scope: {	}
     }
     // item 254
     var flow = nools.compile(ruleFile, options)
@@ -314,30 +300,14 @@ function getDefaultValue(field) {
     }
 }
 
-function initFlow(flow) {
-    // item 12
-    flow.rule("Export each table", [
-        [Table, "table"]
-     ], function (facts) {
-        this.assert(new Export(facts.table.name))
-    })
-}
-
 function makeIndent(depth) {
     // item 189
     return Array(depth * Indent).join(" ")
 }
 
 function makeTableList() {
-    // item 115
-    return [
-    	"ModuleName",
-    	"Table",
-    	"Field",
-    	"Export",
-    	"Index",
-    	"IndexedField"
-    ]
+    // item 269
+    return Object.keys(common)
 }
 
 function outputFacts(session, onSuccess) {

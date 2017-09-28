@@ -11,6 +11,14 @@ function AddIndex(output, tableName, index)
 	}
 }
 
+function CopyOptionalField(src, dst, name)
+{
+	if (name in src)
+	{
+		dst[name] = src[name]
+	}
+}
+
 function InputString(filename)
 {
 	var buffer = fs.readFileSync(filename)
@@ -27,7 +35,10 @@ function InputString(filename)
 		for(var f in table.fields)
 		{
 			var field = table.fields[f]
-			output.push(new common.Field(cnt, table.name, field.name, field.type)) 
+			var ffact = new common.Field(cnt, table.name, field.name, field.type)
+			CopyOptionalField(field, ffact, "nullable")
+			CopyOptionalField(field, ffact, "defaultValue")
+			output.push(ffact)
 			cnt += 1
 		}
 
