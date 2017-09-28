@@ -1,13 +1,36 @@
 {
-    "name": "example01",
+    "name": "example02",
     "tables": [
         {
             "name": "instrument",
             "fields": [
                 {"name": "feed", "type": "int"},
                 {"name": "ticker", "type": "string"},
-                {"name": "last", "type": "double"}
-            ]
+                {"name": "type", "type": "int", "defaultValue": "-1"},
+                {"name": "subtype", "type": "int", "defaultValue": "-1"},
+                {"name": "last", "type": "double"},
+		{"name": "prev_close", "type": "double"},
+		{"name": "bid", "type": "double"},
+		{"name": "ask", "type": "double"}
+            ],
+	    "indexes": [
+		{"name": "ft", "fields": ["feed", "ticker"]}
+	    ]
+        },
+        {
+            "name": "portfolio",
+            "fields": [
+                {"name": "login_id", "type": "int"},
+		{"name": "title", "type": "string"},
+                {"name": "ticker", "type": "string"},
+                {"name": "currency", "type": "string"},
+		{"name": "last", "type": "double", "defaultValue": "-1"},
+		{"name": "prev_close", "type": "double", "nullable": false}
+            ],
+	    "indexes": [
+		{"name": "login_title", "fields": ["login_id", "title"]},
+		{"name": "ticker", "fields": ["ticker"]}
+	    ]
         }
     ]
 }

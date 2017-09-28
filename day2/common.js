@@ -7,18 +7,22 @@ function Table(name) {
     this.name = name
 }
 
-function Field(ordinal, tableName, name, type, defaultValue, keys) {
+function Field(ordinal, tableName, name, type) {
     this.ordinal = ordinal
     this.tableName = tableName
     this.name = name
     this.type = type
-    this.defaultValue = defaultValue || ""
-    this.keys = keys || ""
+    this.defaultValue = ""
+    this.keys = false
+    this.nullable = true
 }
 
 function Export(name) {
     this.name = name
 }
+
+
+
 
 exports.ModuleName = ModuleName
 exports.Table = Table
