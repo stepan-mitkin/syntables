@@ -42,7 +42,8 @@ rule "Default value for string - 4" {
 
 rule "Not NULL for indexed fields - 5" {
     when {
-        f: Field isTrue(f.nullable) && f.keys != '';
+        fi: IndexedField;
+        f: Field isTrue(f.nullable) && f.tableName == fi.tableName && f.name == fi.fieldName;
     }
     then {
         modify(f, function() {

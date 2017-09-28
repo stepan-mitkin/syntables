@@ -104,6 +104,37 @@ function JsAssignment_Print(output, depth) {
     output.push(indent + this.left + " = " + this.right)
 }
 
+function JsCall(left, fun, params) {
+    // item 301
+    this.left = left
+    this.fun = fun
+    this.params = params
+    // item 302
+    this.print = JsCall_Print
+}
+
+function JsCall_Print(output, depth) {
+    // item 308
+    var indent = makeIndent(depth)
+    // item 309
+    var right = this.fun + 
+    	"(" +
+    	this.params.join(",") +
+    	 ")"
+    // item 310
+    var expression
+    // item 311
+    if (this.left) {
+        // item 314
+        expression = this.left + " = " + right
+    } else {
+        // item 315
+        expression = right
+    }
+    // item 316
+    output.push(indent + expression)
+}
+
 function JsFunction(name, params) {
     // item 178
     this.kids = []
@@ -122,25 +153,32 @@ function JsFunction_Print(output, depth) {
     	this.params.join(", ") + ") {"
     // item 195
     output.push(header)
-    // item 1910001
-    var _ind191 = 0;
-    var _col191 = this.kids;
-    var _len191 = _col191.length;
-    while (true) {
-        // item 1910002
-        if (_ind191 < _len191) {
-            
-        } else {
-            break;
-        }
-        // item 1910004
-        var kid = _col191[_ind191];
-        // item 193
-        kid.print(output, depth + 1)
-        // item 1910003
-        _ind191++;
-    }
+    // item 193
+    printKids(this, output, depth)
     // item 194
+    output.push(indent + "}")
+    output.push("")
+}
+
+function JsIf(condition) {
+    // item 276
+    this.kids = []
+    // item 275
+    this.condition = condition
+    // item 277
+    this.print = JsIf_Print
+}
+
+function JsIf_Print(output, depth) {
+    // item 295
+    var indent = makeIndent(depth)
+    // item 291
+    var header = indent + "if (" + this.condition + ") {"
+    // item 294
+    output.push(header)
+    // item 292
+    printKids(this, output, depth)
+    // item 293
     output.push(indent + "}")
     output.push("")
 }
@@ -159,20 +197,22 @@ function addJsField(data, parent, field) {
     // item 157
     var assi = new JsAssignment(
     	"this." + field.name,
-    	field.defaultValue
+    	getValueForFieldCtr(field)
     )
     // item 158
     parent.kids.push(assi)
 }
 
-function addJsTable(data, parent, table) {
+function addJsRecord(data, parent, table) {
     // item 145
     var fields = data.select(
     	"Field",
     	{"tableName": table.name}
     )
     // item 146
-    var fieldNames = fields.map(f => f.name)
+    var fieldNames = fields
+    	.filter(f => !f.nullable)
+    	.map(f => f.name)
     // item 147
     var recordCtr = new JsFunction(
     	table.name,
@@ -225,36 +265,13 @@ function buildJavaScriptAst(data) {
         // item 1260004
         var table = _col126[_ind126];
         // item 128
-        addJsTable(
+        addJsRecord(
         	data,
         	moduleFun,
         	table
         )
         // item 1260003
         _ind126++;
-    }
-    // item 124
-    var exps = data.select("Export", null)
-    // item 1290001
-    var _ind129 = 0;
-    var _col129 = exps;
-    var _len129 = _col129.length;
-    while (true) {
-        // item 1290002
-        if (_ind129 < _len129) {
-            
-        } else {
-            break;
-        }
-        // item 1290004
-        var exp = _col129[_ind129];
-        // item 131
-        addJsExport(
-        	moduleFun,
-        	exp.name
-        )
-        // item 1290003
-        _ind129++;
     }
     // item 139
     return moduleFun
@@ -300,6 +317,17 @@ function getDefaultValue(field) {
     }
 }
 
+function getValueForFieldCtr(field) {
+    // item 335
+    if (field.nullable) {
+        // item 339
+        return field.defaultValue
+    } else {
+        // item 338
+        return field.name
+    }
+}
+
 function makeIndent(depth) {
     // item 189
     return Array(depth * Indent).join(" ")
@@ -337,6 +365,27 @@ function outputFacts(session, onSuccess) {
     }
     // item 238
     onSuccess(data)
+}
+
+function printKids(self, output, depth) {
+    // item 2830001
+    var _ind283 = 0;
+    var _col283 = self.kids;
+    var _len283 = _col283.length;
+    while (true) {
+        // item 2830002
+        if (_ind283 < _len283) {
+            
+        } else {
+            break;
+        }
+        // item 2830004
+        var kid = _col283[_ind283];
+        // item 285
+        kid.print(output, depth + 1)
+        // item 2830003
+        _ind283++;
+    }
 }
 
 function rowMatcher(row, condition) {
