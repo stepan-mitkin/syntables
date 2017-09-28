@@ -9,12 +9,22 @@ var Table = common.Table
 var Field = common.Field
 var Export = common.Export
 
-var inFacts = bjorn.InputString("example02.json")
+function onError(err) {
+	console.log("error", err)
+}
 
-var data = stepan.transformModel("rules.nools", inFacts)
-var root = stepan.buildJavaScriptAst(data)
+function part1() {
+	var inFacts = bjorn.InputString("example02.json")
+	stepan.transformModel("rules.nools", inFacts, part2, onError)
+}
 
-var lines = []
-root.print(lines, 0)
+function part2(data) {
+	var root = stepan.buildJavaScriptAst(data)
 
-console.log(lines.join("\n"))
+	var lines = []
+	root.print(lines, 0)
+
+	console.log(lines.join("\n"))
+}
+
+part1()

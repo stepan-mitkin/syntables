@@ -163,7 +163,7 @@ function addJsField(data, parent, field) {
     // item 157
     var assi = new JsAssignment(
     	"this." + field.name,
-    	getDefaultValue(field)
+    	field.defaultValue
     )
     // item 158
     parent.kids.push(assi)
@@ -265,7 +265,7 @@ function buildJavaScriptAst(data) {
 }
 
 function createRulesEngine(ruleFile) {
-    // item 230
+    // item 257
     var options = {
     	name: "Transformation rules",
     	define: {
@@ -277,9 +277,9 @@ function createRulesEngine(ruleFile) {
     	scope: {
     	}
     }
-    // item 10
+    // item 254
     var flow = nools.compile(ruleFile, options)
-    // item 5
+    // item 253
     return flow
 }
 
@@ -334,6 +334,35 @@ function makeTableList() {
     ]
 }
 
+function outputFacts(session, onSuccess) {
+    // item 236
+    var tables = makeTableList()
+    // item 241
+    var data = new DataEngine(tables)
+    // item 243
+    var facts = session.getFacts()
+    // item 2390001
+    var _ind239 = 0;
+    var _col239 = facts;
+    var _len239 = _col239.length;
+    while (true) {
+        // item 2390002
+        if (_ind239 < _len239) {
+            
+        } else {
+            break;
+        }
+        // item 2390004
+        var fact = _col239[_ind239];
+        // item 242
+        data.insert(fact)
+        // item 2390003
+        _ind239++;
+    }
+    // item 238
+    onSuccess(data)
+}
+
 function rowMatcher(row, condition) {
     // item 56
     if (condition) {
@@ -369,63 +398,61 @@ function rowMatcher(row, condition) {
 }
 
 function runRuleSystem(flow, inputFacts) {
-    // item 20
+    // item 265
     var session = flow.getSession()
-    // item 180001
-    var _ind18 = 0;
-    var _col18 = inputFacts;
-    var _len18 = _col18.length;
+    // item 2630001
+    var _ind263 = 0;
+    var _col263 = inputFacts;
+    var _len263 = _col263.length;
     while (true) {
-        // item 180002
-        if (_ind18 < _len18) {
+        // item 2630002
+        if (_ind263 < _len263) {
             
         } else {
             break;
         }
-        // item 180004
-        var fact = _col18[_ind18];
-        // item 21
+        // item 2630004
+        var fact = _col263[_ind263];
+        // item 266
         session.assert(fact)
-        // item 180003
-        _ind18++;
+        // item 2630003
+        _ind263++;
     }
-    // item 22
+    // item 267
     session.match()
-    // item 23
-    return session.getFacts()
+    // item 268
+    return session
 }
 
-function transformModel(ruleFile, inputFacts) {
+function transformModel(ruleFile, inputFacts, onSuccess, onError) {
     // item 29
-    var tables = makeTableList()
     var flow = createRulesEngine(ruleFile)
-    // item 30
-    var outputFacts = runRuleSystem(
-    	flow,
-    	inputFacts
-    )
-    // item 109
-    var data = new DataEngine(tables)
-    // item 1070001
-    var _ind107 = 0;
-    var _col107 = outputFacts;
-    var _len107 = _col107.length;
+    // item 247
+    var session = flow.getSession()
+    // item 244
+    var onDone = function() {
+    	outputFacts(session, onSuccess)
+    }
+    // item 2450001
+    var _ind245 = 0;
+    var _col245 = inputFacts;
+    var _len245 = _col245.length;
     while (true) {
-        // item 1070002
-        if (_ind107 < _len107) {
+        // item 2450002
+        if (_ind245 < _len245) {
             
         } else {
             break;
         }
-        // item 1070004
-        var fact = _col107[_ind107];
-        // item 110
-        data.insert(fact)
-        // item 1070003
-        _ind107++;
+        // item 2450004
+        var fact = _col245[_ind245];
+        // item 248
+        session.assert(fact)
+        // item 2450003
+        _ind245++;
     }
-    // item 31
-    return data
+    // item 249
+    session.match().then(onDone, onError)
 }
 
 

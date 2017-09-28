@@ -7,3 +7,36 @@ rule "Export each table - 1" {
     }
 }
 
+rule "Default value for int - 2" {
+    when {
+        f2: Field f2.defaultValue == '' and f2.type == 'int';
+    }
+    then {
+        modify(f2, function() {
+	this.defaultValue = "0";
+});
+    }
+}
+
+rule "Default value for double - 3" {
+    when {
+        f: Field f.defaultValue == '' and f.type == 'double';
+    }
+    then {
+        modify(f, function() {
+	this.defaultValue = "0.0";
+});
+    }
+}
+
+rule "Default value for string - 4" {
+    when {
+        f: Field f.defaultValue == '' and f.type == 'string';
+    }
+    then {
+        modify(f, function() {
+	this.defaultValue = '""';
+});
+    }
+}
+

@@ -7,11 +7,13 @@ function Table(name) {
     this.name = name
 }
 
-function Field(ordinal, tableName, name, type) {
+function Field(ordinal, tableName, name, type, defaultValue, keys) {
     this.ordinal = ordinal
     this.tableName = tableName
     this.name = name
     this.type = type
+    this.defaultValue = defaultValue || ""
+    this.keys = keys || ""
 }
 
 function Export(name) {
