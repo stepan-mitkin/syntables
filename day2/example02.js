@@ -2,12 +2,20 @@ function example02() {
    function instrument(feed, ticker) {
        this.feed = feed
        this.ticker = ticker
+       this.type = -1
+       this.subtype = -1
+       this.last = 0.0
+       this.prev_close = 0.0
+       this.bid = 0.0
+       this.ask = 0.0
    }
 
    function portfolio(login_id, title, ticker, prev_close) {
        this.login_id = login_id
        this.title = title
        this.ticker = ticker
+       this.currency = ""
+       this.last = -1
        this.prev_close = prev_close
    }
 
@@ -73,7 +81,7 @@ function example02() {
    }
 
    function instrument_forEach(action) {
-       if (var key in this._ft) {
+       for (var key in this._ft) {
            var row = this._ft[key]
            action(row)
        }
@@ -145,7 +153,7 @@ function example02() {
    }
 
    function portfolio_forEach(action) {
-       if (var key in this._login_title) {
+       for (var key in this._login_title) {
            var row = this._login_title[key]
            action(row)
        }
@@ -159,4 +167,3 @@ function example02() {
 if (typeof exports != "undefined") {
    exports.example02 = example02
 }
-
