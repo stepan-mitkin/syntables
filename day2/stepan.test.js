@@ -1,20 +1,19 @@
 fs = require("fs")
 stepan = require("./stepan.js")
 bjorn = require("./parse.facts.bjorn.js")
+html = require("./parse.html.js")
 
-var common = require("./common.js")
+common = require("./common.js")
 
-var ModuleName = common.ModuleName
-var Table = common.Table
-var Field = common.Field
-var Export = common.Export
+inputFile = "example02.json"
+outputFile = "example02.js"
 
 function onError(err) {
 	console.log("error", err)
 }
 
 function part1() {
-	var inFacts = bjorn.InputString("example02.json")
+	var inFacts = bjorn.ParseInput(inputFile)
 
 	stepan.transformModel("rules.nools", inFacts, part2, onError)
 }
@@ -27,7 +26,13 @@ function part2(data) {
         root.print(lines, 0)
 
 		var result = lines.join("\n")
-		fs.writeFileSync("example02.js", result)
+		fs.writeFileSync(outputFile, result)
+		
+		var docs = html.GenerateHtmlDocs(inputFile)
+		for (var i in docs) {
+            var doc = docs[i]
+            fs.writeFileSync(doc.filename, doc.body)
+		}		
 	} catch (e) {
 		console.log(e)
 	}

@@ -21,7 +21,7 @@ function CopyOptionalField(src, dst, name)
 	}
 }
 
-function InputString(filename)
+function ParseInput(filename)
 {
 	var buffer = fs.readFileSync(filename)
 	var s = buffer.toString('utf8')
@@ -55,7 +55,7 @@ function InputString(filename)
 	return output
 }
 
-exports.InputString = InputString
+exports.ParseInput = ParseInput
 
 
 // execute
