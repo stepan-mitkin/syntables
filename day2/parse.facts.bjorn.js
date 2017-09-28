@@ -9,13 +9,15 @@ function InputString(filename)
 	
 	var output = []
 	output.push(new common.ModuleName(module.name))
-	for(var table in module.tables)
+	for(var t in module.tables)
 	{
-		output.push(new common.Table(module.tables[table].name))
+		var table = module.tables[t]
+		output.push(new common.Table(table.name))
 		var cnt = 1
-		for(var field in module.tables[table].fields)
+		for(var f in table.fields)
 		{
-			output.push(new common.Field(cnt, module.tables[table].name, module.tables[table].fields[field].name, module.tables[table].fields[field].type)) 
+			var field = table.fields[f]
+			output.push(new common.Field(cnt, table.name, field.name, field.type)) 
 			cnt += 1
 		}	
 	}	
