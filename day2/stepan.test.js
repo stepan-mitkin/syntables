@@ -9,9 +9,9 @@ var Table = common.Table
 var Field = common.Field
 var Export = common.Export
 
-var inFacts = bjorn.InputString("example.01.in.json")
+var inFacts = bjorn.InputString("example02.json")
 
-var data = stepan.transformModel(inFacts)
+var data = stepan.transformModel("rules.nools", inFacts)
 var root = stepan.buildJavaScriptAst(data)
 
 var lines = []

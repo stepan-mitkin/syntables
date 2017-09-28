@@ -1,0 +1,9 @@
+rule "Export each table - 1" {
+    when {
+        table: Table;
+    }
+    then {
+        assert(new Export(table.name))
+    }
+}
+

@@ -1,0 +1,10 @@
+rule "person name is bob" {
+    when {
+	f4 : Foo;
+        f1 : Foo f1.name == 'hello' and f1.value == f4.value;
+	f2 : Foo f1.name == f2.name and f2 != f4 and f2 != f1;
+    }
+    then {
+	console.log("found!", f1, f2, f4)
+    }
+}

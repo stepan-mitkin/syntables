@@ -264,9 +264,21 @@ function buildJavaScriptAst(data) {
     return moduleFun
 }
 
-function createRulesEngine() {
+function createRulesEngine(ruleFile) {
+    // item 230
+    var options = {
+    	name: "Transformation rules",
+    	define: {
+    		ModuleName: ModuleName,
+    		Table: Table,
+    		Field: Field,
+    		Export: Export
+    	},
+    	scope: {
+    	}
+    }
     // item 10
-    var flow = nools.flow("flow1", initFlow)
+    var flow = nools.compile(ruleFile, options)
     // item 5
     return flow
 }
@@ -383,10 +395,10 @@ function runRuleSystem(flow, inputFacts) {
     return session.getFacts()
 }
 
-function transformModel(inputFacts) {
+function transformModel(ruleFile, inputFacts) {
     // item 29
     var tables = makeTableList()
-    var flow = createRulesEngine()
+    var flow = createRulesEngine(ruleFile)
     // item 30
     var outputFacts = runRuleSystem(
     	flow,
