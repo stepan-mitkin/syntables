@@ -1,0 +1,13 @@
+{
+    "name": "example01",
+    "tables": [
+        {
+            "name": "instrument",
+            "fields": [
+                {"name": "feed", "type": "int"},
+                {"name": "ticker", "type": "string"},
+                {"name": "last", "type": "double"}
+            ]
+        }
+    ]
+}
