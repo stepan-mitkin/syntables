@@ -7,6 +7,8 @@ var ModuleName = common.ModuleName
 var Table = common.Table
 var Field = common.Field
 var Export = common.Export
+var Index = common.Index
+var IndexedField = common.IndexedField
 
 var Indent = 4
 
@@ -272,7 +274,9 @@ function createRulesEngine(ruleFile) {
     		ModuleName: ModuleName,
     		Table: Table,
     		Field: Field,
-    		Export: Export
+    		Export: Export,
+    		Index: Index,
+    		IndexedField: IndexedField
     	},
     	scope: {
     	}
@@ -330,7 +334,9 @@ function makeTableList() {
     	"ModuleName",
     	"Table",
     	"Field",
-    	"Export"
+    	"Export",
+    	"Index",
+    	"IndexedField"
     ]
 }
 

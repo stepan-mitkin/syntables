@@ -1,6 +1,16 @@
 var common = require("./common.js")
 var fs = require("fs")
 
+function AddIndex(output, tableName, index)
+{
+	output.push(new common.Index(tableName, index.name))
+	for (var f in index.fields)
+	{
+		var field = index.fields[f]
+		output.push(new common.IndexedField(tableName, index.name, field))
+	}
+}
+
 function InputString(filename)
 {
 	var buffer = fs.readFileSync(filename)
@@ -19,7 +29,15 @@ function InputString(filename)
 			var field = table.fields[f]
 			output.push(new common.Field(cnt, table.name, field.name, field.type)) 
 			cnt += 1
-		}	
+		}
+
+		var indexes = table.indexes || []
+		for (var i in indexes)
+		{
+			var index = indexes[i]
+			AddIndex(output, table.name, index)
+		}
+				
 	}	
 	return output		
 }
