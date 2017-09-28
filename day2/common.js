@@ -3,8 +3,9 @@ function ModuleName(name) {
     this.name = name
 }
 
-function Table(name) {
+function Table(name, collectionName) {
     this.name = name
+    this.collectionName = collectionName
 }
 
 function Field(ordinal, tableName, name, type) {

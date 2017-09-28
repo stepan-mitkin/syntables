@@ -30,7 +30,7 @@ function InputString(filename)
 	for(var t in module.tables)
 	{
 		var table = module.tables[t]
-		output.push(new common.Table(table.name))
+		output.push(new common.Table(table.name, table.collectionName))
 		var cnt = 1
 		for(var f in table.fields)
 		{
@@ -50,7 +50,7 @@ function InputString(filename)
 		}
 				
 	}	
-	return output		
+	return output
 }
 
 exports.InputString = InputString

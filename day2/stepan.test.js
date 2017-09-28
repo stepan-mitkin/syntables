@@ -15,16 +15,24 @@ function onError(err) {
 
 function part1() {
 	var inFacts = bjorn.InputString("example02.json")
+//	for (var i in inFacts) { console.log(inFacts[i]) }
 	stepan.transformModel("rules.nools", inFacts, part2, onError)
 }
 
 function part2(data) {
-	var root = stepan.buildJavaScriptAst(data)
+	try {
+        console.log(data.tables.Table.rows)
+        console.log(data.tables.Field.rows)
 
-	var lines = []
-	root.print(lines, 0)
+        var root = stepan.buildJavaScriptAst(data)
 
-	console.log(lines.join("\n"))
+        var lines = []
+        root.print(lines, 0)
+
+        console.log(lines.join("\n"))
+	} catch (e) {
+		console.log(e)
+	}
 }
 
 part1()

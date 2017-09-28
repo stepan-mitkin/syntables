@@ -244,6 +244,65 @@ function addJsRecord(data, parent, table) {
     }
 }
 
+function addJsTable(data, parent, table) {
+    // item 360
+    var ctr = fun(parent, table.collectionName, [])
+    // item 365
+    assi(ctr, "this._count", "0")
+    assi(ctr, "this.insert", makeInsertName(table))
+    assi(ctr, "this.remove", makeRemoveName(table))
+    // item 420
+    var indexes = data.select("Index", {
+    	"tableName": table.name
+    })
+    // item 4210001
+    var _ind421 = 0;
+    var _col421 = indexes;
+    var _len421 = _col421.length;
+    while (true) {
+        // item 4210002
+        if (_ind421 < _len421) {
+            
+        } else {
+            break;
+        }
+        // item 4210004
+        var index = _col421[_ind421];
+        // item 426
+        assi(ctr, "this._" + index.name, "{}")
+        // item 4210003
+        _ind421++;
+    }
+    // item 4270001
+    var _ind427 = 0;
+    var _col427 = indexes;
+    var _len427 = _col427.length;
+    while (true) {
+        // item 4270002
+        if (_ind427 < _len427) {
+            
+        } else {
+            break;
+        }
+        // item 4270004
+        var index = _col427[_ind427];
+        // item 430
+        var fieldName = getByName(index)
+        var procName = getByProcName(index)
+        // item 429
+        assi(ctr, "this." + fieldName, procName)
+        // item 4270003
+        _ind427++;
+    }
+}
+
+function assi(output, left, right) {
+    // item 395
+    var item = new JsAssignment(left, right)
+    // item 396
+    output.kids.push(item)
+}
+
 function buildJavaScriptAst(data) {
     // item 122
     var module = data.selectOne("ModuleName", null)
@@ -273,8 +332,59 @@ function buildJavaScriptAst(data) {
         // item 1260003
         _ind126++;
     }
+    // item 3400001
+    var _ind340 = 0;
+    var _col340 = tables;
+    var _len340 = _col340.length;
+    while (true) {
+        // item 3400002
+        if (_ind340 < _len340) {
+            
+        } else {
+            break;
+        }
+        // item 3400004
+        var table = _col340[_ind340];
+        // item 342
+        addJsTable(
+        	data,
+        	moduleFun,
+        	table
+        )
+        // item 3400003
+        _ind340++;
+    }
+    // item 4310001
+    var _ind431 = 0;
+    var _col431 = tables;
+    var _len431 = _col431.length;
+    while (true) {
+        // item 4310002
+        if (_ind431 < _len431) {
+            
+        } else {
+            break;
+        }
+        // item 4310004
+        var table = _col431[_ind431];
+        // item 433
+        assi(
+        	moduleFun,
+        	"this." + table.collectionName,
+        	"new " + table.collectionName + "()"
+        )
+        // item 4310003
+        _ind431++;
+    }
     // item 139
     return moduleFun
+}
+
+function call(output, left, fun, params) {
+    // item 402
+    var item = new JsCall(left, fun, params)
+    // item 403
+    output.kids.push(item)
 }
 
 function createRulesEngine(ruleFile) {
@@ -288,6 +398,25 @@ function createRulesEngine(ruleFile) {
     var flow = nools.compile(ruleFile, options)
     // item 253
     return flow
+}
+
+function fun(output, name, params) {
+    // item 409
+    var item = new JsFunction(name, params)
+    // item 410
+    output.kids.push(item)
+    // item 411
+    return item
+}
+
+function getByName(index) {
+    // item 383
+    return "get_by_" + index.name
+}
+
+function getByProcName(index) {
+    // item 389
+    return index.tableName + "_" + getByName(index)
 }
 
 function getDefaultValue(field) {
@@ -328,9 +457,28 @@ function getValueForFieldCtr(field) {
     }
 }
 
+function ifs(output, condition) {
+    // item 417
+    var item = new JsIf(condition)
+    // item 418
+    output.kids.push(item)
+    // item 419
+    return item
+}
+
 function makeIndent(depth) {
     // item 189
     return Array(depth * Indent).join(" ")
+}
+
+function makeInsertName(table) {
+    // item 371
+    return table.name + "_insert"
+}
+
+function makeRemoveName(table) {
+    // item 377
+    return table.name + "_remove"
 }
 
 function makeTableList() {
