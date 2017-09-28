@@ -7,41 +7,54 @@ function InputString(filename)
 	var s = buffer.toString('utf8')
 	var m = JSON.parse(s)
 	
-	var html = builder.create('html', {headless: true, standalone: false})
-	var head = html.ele('head')
-	
-	var module
+	var resultList = []
+	var moduleList = []
 	for(var t in m.tables)
 	{
-		module = m.tables[t].name
-		break
-	}
+		var html = builder.create('html', {headless: true, standalone: false})
+		var head = html.ele('head')
 	
-	head.ele('title', {}, module)
-	head.ele('link', {rel:"stylesheet", type:"text/css", href:"mystyle.css"})
-		
-	var body = html.ele('body')
-	body.ele('h1', {}, module)
-	body.ele('p', {}, m.name)
+		var module =  m.tables[t].name
+		moduleList.push(module)
 	
-	for(var t in m.tables)
-	{
-		var table = body.ele('table')
-		var row = table.ele('tr')
-		row.ele('th', {}, "Name")
-		row.ele('th', {}, "Type")
+	
+		head.ele('title', {}, module)
+		head.ele('link', {rel:"stylesheet", type:"text/css", href:"mystyle.css"})
+			
+		var body = html.ele('body')
+		body.ele('h1', {}, module)
+		body.ele('p', {}, m.name)
 		
-		for(var f in m.tables[t].fields)
+		for(var t in m.tables)
 		{
-			row = table.ele('tr')
-			row.ele('td', {}, m.tables[t].fields[f].name)
-			row.ele('td', {}, m.tables[t].fields[f].type)
-		}
-	}	
+			var table = body.ele('table')
+			var row = table.ele('tr')
+			row.ele('th', {}, "Name")
+			row.ele('th', {}, "Type")
+			
+			for(var f in m.tables[t].fields)
+			{
+				row = table.ele('tr')
+				row.ele('td', {}, m.tables[t].fields[f].name)
+				row.ele('td', {}, m.tables[t].fields[f].type)
+			}
+		}	
+		resultList.push(html.end({pretty: true}))
+	}
+	var result = []
+	for(var item in resultList)
+	{
+		var ext = ".html"
+		var asdf = {filename: moduleList[item] + ext, body: resultList[item]}
+		result.push(asdf)
+		
+	}
+	//console.log(result)
 	
-	var xmlString = html.end({pretty: true})
+	//var xmlString = html.end({pretty: true})
 	
-	return xmlString
+	//return xmlString
+	return result
 }
 
 exports.InputString = InputString
