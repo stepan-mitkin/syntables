@@ -72,6 +72,8 @@ function DataEngine_selectOne(tableName, condition) {
     } else {
         // item 78
         if (found.length == 0) {
+            // item 626
+            console.log(condition, found)
             // item 82
             var message = "many rows found in " + tableName
             // item 77
@@ -135,6 +137,28 @@ function JsCall_Print(output, depth) {
     output.push(indent + expression)
 }
 
+function JsFor(condition) {
+    // item 714
+    this.kids = []
+    this.condition = condition
+    // item 715
+    this.print = JsFor_Print
+}
+
+function JsFor_Print(output, depth) {
+    // item 725
+    var indent = makeIndent(depth)
+    // item 721
+    var header = indent + "for (" + this.condition + ") {"
+    // item 724
+    output.push(header)
+    // item 722
+    printKids(this, output, depth)
+    // item 723
+    output.push(indent + "}")
+    output.push("")
+}
+
 function JsFunction(name, params) {
     // item 178
     this.kids = []
@@ -183,6 +207,29 @@ function JsIf_Print(output, depth) {
     output.push("")
 }
 
+function JsLine(text) {
+    // item 523
+    this.text = text
+    // item 524
+    this.print = JsLine_Print
+}
+
+function JsLine_Print(output, depth) {
+    // item 530
+    var indent = makeIndent(depth)
+    // item 531
+    var line = indent + this.text
+    // item 532
+    output.push(line)
+}
+
+function JsList() {
+    // item 743
+    this.kids = []
+    // item 744
+    this.print = function(output, depth) { printKids(this, output, depth - 1) }
+}
+
 function addJsExport(parent, name) {
     // item 164
     var assi = new JsAssignment(
@@ -204,15 +251,9 @@ function addJsField(data, parent, field) {
 }
 
 function addJsRecord(data, parent, table) {
-    // item 145
-    var fields = data.select(
-    	"Field",
-    	{"tableName": table.name}
-    )
     // item 146
-    var fieldNames = fields
-    	.filter(f => !f.nullable)
-    	.map(f => f.name)
+    var fields = getNonNullable(data, table)
+    var fieldNames = fields.map(f => f.name)
     // item 147
     var recordCtr = new JsFunction(
     	table.name,
@@ -220,9 +261,11 @@ function addJsRecord(data, parent, table) {
     )
     // item 148
     parent.kids.push(recordCtr)
+    // item 754
+    var allFields = getFields(data, table)
     // item 1490001
     var _ind149 = 0;
-    var _col149 = fields;
+    var _col149 = allFields;
     var _len149 = _col149.length;
     while (true) {
         // item 1490002
@@ -251,10 +294,10 @@ function addJsTable(data, parent, table) {
     assi(ctr, "this._count", "0")
     assi(ctr, "this.insert", makeInsertName(table))
     assi(ctr, "this.remove", makeRemoveName(table))
+    assi(ctr, "this.count", "function() { return this._count } ")
+    assi(ctr, "this.forEach", makeForeachName(table))
     // item 420
-    var indexes = data.select("Index", {
-    	"tableName": table.name
-    })
+    var indexes = getIndexes(data, table)
     // item 4210001
     var _ind421 = 0;
     var _col421 = indexes;
@@ -296,6 +339,54 @@ function addJsTable(data, parent, table) {
     }
 }
 
+function addNotNullCheck(parent, data, table, fieldName) {
+    // item 577
+    var condition = "typeof " + fieldName + 
+    	" === \"undefined\" || " + 
+    	fieldName + " === null"
+    // item 578
+    var field = data.selectOne("Field", {
+    	tableName: table.name,
+    	name: fieldName
+    })
+    // item 579
+    if (field.type == "string") {
+        // item 582
+        condition += (" || " + fieldName + " === \"\"")
+    } else {
+        
+    }
+    // item 583
+    var block = ifs(parent, condition)
+    // item 592
+    var message = "\"" + table.name + "." + fieldName +
+      " is null\""
+    // item 584
+    err(block, message)
+}
+
+function addUniqueCheck(parent, data, table, index) {
+    // item 606
+    var ifields = getIndexFields(data, index)
+    var keyName = makeKeyName(index)
+    // item 604
+    var keyValue = makeKey(ifields)
+    // item 605
+    assi(parent, "var " + keyName, keyValue)
+    // item 607
+    var condition = keyName + " in this._" + index.name
+    // item 608
+    var block = ifs(parent, condition)
+    // item 612
+    var values = ifields.join(" + \", \" + ")
+    // item 611
+    var message = "\"" + table.name + "." + index.name +
+      " indexed fields are not unique: \" + " +
+      values
+    // item 610
+    err(block, message)
+}
+
 function assi(output, left, right) {
     // item 395
     var item = new JsAssignment(left, right)
@@ -306,8 +397,10 @@ function assi(output, left, right) {
 function buildJavaScriptAst(data) {
     // item 122
     var module = data.selectOne("ModuleName", null)
+    // item 745
+    var root = new JsList()
     // item 125
-    var moduleFun = new JsFunction(module.name)
+    var moduleFun = fun(root, module.name, [])
     // item 123
     var tables = data.select("Table", null)
     // item 1260001
@@ -354,6 +447,46 @@ function buildJavaScriptAst(data) {
         // item 3400003
         _ind340++;
     }
+    // item 4370001
+    var _ind437 = 0;
+    var _col437 = tables;
+    var _len437 = _col437.length;
+    while (true) {
+        // item 4370002
+        if (_ind437 < _len437) {
+            
+        } else {
+            break;
+        }
+        // item 4370004
+        var table = _col437[_ind437];
+        // item 439
+        makeInsert(
+        	moduleFun,
+        	data,
+        	table
+        )
+        // item 440
+        makeRemove(
+        	moduleFun,
+        	data,
+        	table
+        )
+        // item 441
+        makeIndexGetters(
+        	moduleFun,
+        	data,
+        	table
+        )
+        // item 702
+        makeForeach(
+        	moduleFun,
+        	data,
+        	table
+        )
+        // item 4370003
+        _ind437++;
+    }
     // item 4310001
     var _ind431 = 0;
     var _col431 = tables;
@@ -376,8 +509,12 @@ function buildJavaScriptAst(data) {
         // item 4310003
         _ind431++;
     }
+    // item 747
+    var block = ifs(root, "typeof exports != \"undefined\"")
+    // item 746
+    assi(block, "exports." + module.name, module.name)
     // item 139
-    return moduleFun
+    return root
 }
 
 function call(output, left, fun, params) {
@@ -400,11 +537,27 @@ function createRulesEngine(ruleFile) {
     return flow
 }
 
-function fun(output, name, params) {
+function err(parent, message) {
+    // item 590
+    var item = new JsLine("throw new Error(" + message + ")")
+    // item 591
+    parent.kids.push(item)
+}
+
+function fors(output, condition) {
+    // item 731
+    var item = new JsFor(condition)
+    // item 732
+    output.kids.push(item)
+    // item 733
+    return item
+}
+
+function fun(parent, name, params) {
     // item 409
     var item = new JsFunction(name, params)
     // item 410
-    output.kids.push(item)
+    parent.kids.push(item)
     // item 411
     return item
 }
@@ -446,6 +599,51 @@ function getDefaultValue(field) {
     }
 }
 
+function getFields(data, table) {
+    // item 753
+    return data.select(
+    	"Field",
+    	{"tableName": table.name}
+    )
+}
+
+function getIndexFields(data, index) {
+    // item 497
+    var fields = data.select("IndexedField", {
+    	indexName: index.name,
+    	tableName: index.tableName
+    })
+    // item 505
+    orderBy(fields, "ordinal")
+    // item 506
+    var getTableField = function(ifield) {
+    	return data.selectOne("Field", {
+    		tableName: index.tableName,
+    		name: ifield.fieldName
+    	})
+    }
+    // item 507
+    return fields
+    	.map(getTableField)
+    	.map(f => f.name)
+}
+
+function getIndexes(data, table) {
+    // item 475
+    var indexes = data.select("Index", {
+    	"tableName": table.name
+    })
+    // item 476
+    return indexes
+}
+
+function getNonNullable(data, table) {
+    // item 556
+    var fields = getFields(data, table)
+    // item 557
+    return fields.filter(f => !f.nullable)
+}
+
 function getValueForFieldCtr(field) {
     // item 335
     if (field.nullable) {
@@ -466,14 +664,264 @@ function ifs(output, condition) {
     return item
 }
 
+function makeForeach(parent, data, table) {
+    // item 708
+    var method = fun(
+    	parent,
+    	makeForeachName(table),
+    	["action"]
+    )
+    // item 734
+    var indexes = getIndexes(data, table)
+    // item 735
+    var index = indexes[0]
+    // item 736
+    var block = fors(method, "var key in this._" + index.name)
+    // item 737
+    assi(block, "var row", "this._" + index.name + "[key]")
+    // item 738
+    call(block, null, "action", ["row"])
+}
+
+function makeForeachName(table) {
+    // item 701
+    return table.name + "_forEach"
+}
+
 function makeIndent(depth) {
     // item 189
     return Array(depth * Indent).join(" ")
 }
 
+function makeIndexGetter(parent, data, index) {
+    // item 508
+    var fields = getIndexFields(data, index)
+    // item 509
+    var getter = fun(
+    	parent,
+    	getByProcName(index),
+    	fields
+    )
+    // item 515
+    var keyValue = makeKey(fields)
+    // item 516
+    assi(getter, "var _key", keyValue)
+    // item 517
+    ret(
+    	getter,
+    	"this._" + index.name + "[_key]"
+    )
+}
+
+function makeIndexGetters(parent, data, table) {
+    // item 482
+    var indexes = getIndexes(data, table)
+    // item 4830001
+    var _ind483 = 0;
+    var _col483 = indexes;
+    var _len483 = _col483.length;
+    while (true) {
+        // item 4830002
+        if (_ind483 < _len483) {
+            
+        } else {
+            break;
+        }
+        // item 4830004
+        var index = _col483[_ind483];
+        // item 484
+        makeIndexGetter(
+        	parent,
+        	data,
+        	index
+        )
+        // item 4830003
+        _ind483++;
+    }
+}
+
+function makeInsert(parent, data, table) {
+    // item 559
+    var fields = getNonNullable(data, table)
+    var fieldNames = fields.map(f => f.name)
+    // item 547
+    var method = fun(
+    	parent,
+    	makeInsertName(table),
+    	fieldNames
+    )
+    // item 5690001
+    var _ind569 = 0;
+    var _col569 = fields;
+    var _len569 = _col569.length;
+    while (true) {
+        // item 5690002
+        if (_ind569 < _len569) {
+            
+        } else {
+            break;
+        }
+        // item 5690004
+        var field = _col569[_ind569];
+        // item 571
+        addNotNullCheck(
+        	method,
+        	data,
+        	table,
+        	field.name
+        )
+        // item 5690003
+        _ind569++;
+    }
+    // item 594
+    var indexes = getIndexes(data, table)
+    // item 5950001
+    var _ind595 = 0;
+    var _col595 = indexes;
+    var _len595 = _col595.length;
+    while (true) {
+        // item 5950002
+        if (_ind595 < _len595) {
+            
+        } else {
+            break;
+        }
+        // item 5950004
+        var index = _col595[_ind595];
+        // item 598
+        addUniqueCheck(
+        	method,
+        	data,
+        	table,
+        	index
+        )
+        // item 5950003
+        _ind595++;
+    }
+    // item 613
+    var rec = "var _record = new " +
+    	table.name + "(" + fieldNames.join(", ") +
+    	")"
+    // item 627
+    method.kids.push(new JsLine(rec))
+    // item 6210001
+    var _ind621 = 0;
+    var _col621 = indexes;
+    var _len621 = _col621.length;
+    while (true) {
+        // item 6210002
+        if (_ind621 < _len621) {
+            
+        } else {
+            break;
+        }
+        // item 6210004
+        var index = _col621[_ind621];
+        // item 625
+        var keyName = makeKeyName(index)
+        // item 624
+        var inserter = "this._" + index.name +
+         "[" + keyName + "] = _record"
+        // item 623
+        method.kids.push(
+        	new JsLine(inserter)
+        )
+        // item 6210003
+        _ind621++;
+    }
+    // item 593
+    method.kids.push(
+    	new JsLine("this._count++")
+    )
+    // item 695
+    ret(method, "_record")
+}
+
 function makeInsertName(table) {
     // item 371
     return table.name + "_insert"
+}
+
+function makeKey(fields) {
+    // item 545
+    return fields.join(" + \"|||\" + ")
+}
+
+function makeKeyName(index) {
+    // item 620
+    return "_key_" + index.name
+}
+
+function makeRemove(parent, data, table) {
+    // item 636
+    var method = fun(
+    	parent,
+    	makeRemoveName(table),
+    	["row"]
+    )
+    // item 672
+    var checkNull = ifs(method, "!row")
+    // item 673
+    checkNull.kids.push(new JsLine("return"))
+    // item 651
+    var indexes = getIndexes(data, table)
+    // item 6520001
+    var _ind652 = 0;
+    var _col652 = indexes;
+    var _len652 = _col652.length;
+    while (true) {
+        // item 6520002
+        if (_ind652 < _len652) {
+            
+        } else {
+            break;
+        }
+        // item 6520004
+        var index = _col652[_ind652];
+        // item 674
+        returnIfNotFound(
+        	method,
+        	data,
+        	table,
+        	index
+        )
+        // item 6520003
+        _ind652++;
+    }
+    // item 6930001
+    var _ind693 = 0;
+    var _col693 = indexes;
+    var _len693 = _col693.length;
+    while (true) {
+        // item 6930002
+        if (_ind693 < _len693) {
+            
+        } else {
+            break;
+        }
+        // item 6930004
+        var index = _col693[_ind693];
+        // item 654
+        removeFromIndex(
+        	method,
+        	data,
+        	table,
+        	index
+        )
+        // item 6930003
+        _ind693++;
+    }
+    // item 650
+    method.kids.push(
+    	new JsLine("this._count--")
+    )
+}
+
+function makeRemoveKey(fields) {
+    // item 692
+    fields = fields.map(f => "row." + f)
+    // item 691
+    return fields.join(" + \"|||\" + ")
 }
 
 function makeRemoveName(table) {
@@ -484,6 +932,18 @@ function makeRemoveName(table) {
 function makeTableList() {
     // item 269
     return Object.keys(common)
+}
+
+function orderBy(list, field) {
+    // item 503
+    var comparer = function(left, right) {
+    	var leftValue = left[field]
+    	var rightValue = right[field]
+    	return leftValue - rightValue
+    	
+    }
+    // item 504
+    list.sort(comparer)
 }
 
 function outputFacts(session, onSuccess) {
@@ -534,6 +994,40 @@ function printKids(self, output, depth) {
         // item 2830003
         _ind283++;
     }
+}
+
+function removeFromIndex(parent, data, table, index) {
+    // item 669
+    var ifields = getIndexFields(data, index)
+    var keyName = makeKeyName(index)
+    // item 670
+    var remove = "delete this._" +
+    	index.name + "[" + keyName + "]"
+    // item 671
+    parent.kids.push(new JsLine(remove))
+}
+
+function ret(parent, value) {
+    // item 538
+    var item = new JsLine("return " + value)
+    // item 539
+    parent.kids.push(item)
+}
+
+function returnIfNotFound(parent, data, table, index) {
+    // item 682
+    var ifields = getIndexFields(data, index)
+    var keyName = makeKeyName(index)
+    // item 680
+    var keyValue = makeRemoveKey(ifields)
+    // item 681
+    assi(parent, "var " + keyName, keyValue)
+    // item 683
+    var condition = "!(" + keyName + " in this._" + index.name + ")"
+    // item 684
+    var block = ifs(parent, condition)
+    // item 685
+    block.kids.push(new JsLine("return"))
 }
 
 function rowMatcher(row, condition) {

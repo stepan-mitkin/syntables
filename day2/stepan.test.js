@@ -21,8 +21,8 @@ function part1() {
 
 function part2(data) {
 	try {
-        console.log(data.tables.Table.rows)
-        console.log(data.tables.Field.rows)
+//        console.log(data.tables.Table.rows)
+//        console.log(data.tables.Field.rows)
 
         var root = stepan.buildJavaScriptAst(data)
 

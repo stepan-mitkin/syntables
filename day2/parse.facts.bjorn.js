@@ -4,10 +4,12 @@ var fs = require("fs")
 function AddIndex(output, tableName, index)
 {
 	output.push(new common.Index(tableName, index.name))
+	var ordinal = 1
 	for (var f in index.fields)
 	{
 		var field = index.fields[f]
-		output.push(new common.IndexedField(tableName, index.name, field))
+		output.push(new common.IndexedField(tableName, index.name, field, ordinal))
+		ordinal++
 	}
 }
 

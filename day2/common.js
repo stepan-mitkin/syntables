@@ -27,10 +27,11 @@ function Index(tableName, name) {
 	this.name = name
 }
 
-function IndexedField(tableName, indexName, fieldName) {
+function IndexedField(tableName, indexName, fieldName, ordinal) {
 	this.tableName = tableName
 	this.indexName = indexName
 	this.fieldName = fieldName
+	this.ordinal = ordinal
 }
 
 
