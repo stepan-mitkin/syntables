@@ -1,8 +1,16 @@
+This is what we did on the second day of the hackathon.
+
 How to run the demo.
 
 1. Generate code:
-node stepan.test.js
-This will re-generate example02.js
 
-2. Run the demo program
+node run_generator.js
+
+This will re-generate:
+- example02.js
+- instrument.html
+- portfolio.html
+
+2. Run the test demo program
+
 node example02.test.js

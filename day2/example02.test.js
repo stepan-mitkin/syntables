@@ -1,5 +1,14 @@
 ex = require("./example02.js")
 
+console.log("")
+console.log("")
+console.log("==============")
+console.log("    HELLO!")
+console.log("==============")
+console.log("Let's run some tests.")
+console.log("")
+
+
 console.log("create the database")
 var db = new ex.example02()
 
