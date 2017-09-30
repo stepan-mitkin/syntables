@@ -2,6 +2,8 @@
 
 A project for Infront hackathon, September 2017.
 
+27-28 September 2017
+
 The team:
 - Björn Englundh
 - Stepan Mitkin
@@ -10,5 +12,5 @@ A prototype of an expert system that takes in a conceptual model of a program an
 It also automatically produces HTML documentation.
 
 Technologies used:
-nools - rules engine
-DRAKON - rules language
+- nools - rules engine https://github.com/stepan-mitkin/drakon_editor
+- DRAKON - rules language https://github.com/noolsjs/nools
