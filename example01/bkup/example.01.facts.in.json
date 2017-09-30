@@ -1,8 +1,0 @@
-
-[
-new ModuleName("example01"),
-new Table("instrument"),
-new Field(1, "feed", "int"),
-new Field(2, "ticker", "string"),
-new Field(3, "last", "double")
-]

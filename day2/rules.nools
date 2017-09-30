@@ -1,52 +1,43 @@
-rule "Export each table - 1" {
+rule "Default value for double - 1" {
     when {
-        table: Table;
+        field: Field field.defaultValue == '' && field.type == 'double';
     }
     then {
-        assert(new Export(table.name))
-    }
-}
-
-rule "Default value for int - 2" {
-    when {
-        f2: Field f2.defaultValue == '' and f2.type == 'int';
-    }
-    then {
-        modify(f2, function() {
-	this.defaultValue = "0";
-});
-    }
-}
-
-rule "Default value for double - 3" {
-    when {
-        f: Field f.defaultValue == '' and f.type == 'double';
-    }
-    then {
-        modify(f, function() {
+        modify(field, function() {
 	this.defaultValue = "0.0";
 });
     }
 }
 
-rule "Default value for string - 4" {
+rule "Default value for int - 2" {
     when {
-        f: Field f.defaultValue == '' and f.type == 'string';
+        field: Field field.defaultValue == '' && field.type == 'double';
     }
     then {
-        modify(f, function() {
+        modify(field, function() {
+	this.defaultValue = "0";
+});
+    }
+}
+
+rule "Default value for string - 3" {
+    when {
+        field: Field field.defaultValue == '' && field.type == 'string';
+    }
+    then {
+        modify(field, function() {
 	this.defaultValue = '""';
 });
     }
 }
 
-rule "Not NULL for indexed fields - 5" {
+rule "Not NULL for indexed fields - 4" {
     when {
-        fi: IndexedField;
-        f: Field isTrue(f.nullable) && f.tableName == fi.tableName && f.name == fi.fieldName;
+        ifield: IndexedField;
+        field: Field isTrue(field.nullable) && field.tableName == ifield.tableName && field.name == ifield.fieldName;
     }
     then {
-        modify(f, function() {
+        modify(field, function() {
 	this.nullable = false;
 });
     }
