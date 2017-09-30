@@ -12,5 +12,5 @@ A prototype of an expert system that takes in a conceptual model of a program an
 It also automatically produces HTML documentation.
 
 Technologies used:
-- nools - rules engine https://github.com/stepan-mitkin/drakon_editor
-- DRAKON - rules language https://github.com/noolsjs/nools
+- nools - rules engine https://github.com/noolsjs/nools
+- DRAKON - rules language https://github.com/stepan-mitkin/drakon_editor
