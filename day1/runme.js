@@ -1,6 +1,6 @@
 fs = require("fs")
-stepan = require("./stepan.js")
-bjorn = require("./parse.facts.bjorn.js")
+stepan = require("./generator.js")
+bjorn = require("./parse.facts.js")
 
 var common = require("./common.js")
 

@@ -1,5 +1,10 @@
 This is what we did on the second day of the hackathon.
 
+Pre-requisites:
+npm install xmlbuilder
+npm install nools
+
+
 How to run the demo.
 
 1. Generate code:
