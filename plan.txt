@@ -1,8 +1,0 @@
-Iteration 1, "start the engine, bitch"
-1. Examples of input JSON. Features: basic tables with int, double and string fields. No C++, just JavaScript.
-2. Examples of output JavaScript.
-3. A set of facts and rules that describe the input model.
-4. A set of facts that describe the output model.
-5. Set up the expert system and make it work.
-6. Write code that transforms the generated model to JavaScript AST.
-
